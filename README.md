@@ -16,3 +16,4 @@ The two most common ways to send data over the Internet are: JSON and XML.
 - **Attributes** - Keyword/value pairs on the opening tag of XML.
 - **Serialize / De-Serialize** - Convert data in one program into a common format that can be stored and/or transmitted between systems in a programming language-independet manner.
 
+### JSON (JavaScript Object Notation)
