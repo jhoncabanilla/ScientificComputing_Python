@@ -28,4 +28,10 @@ The two most common ways to send data over the Internet are: JSON and XML.
 - An object is a bit of self-contained Code and Data
 - A key aspect of the Object approach is to break the problem into smaller understandable parts (divide and conquer)
 -  Objects have boundaries that allow us to ignore un-needed detail
--  **String Objects, Integer Objects, Dictionary Objects, List Objects, ...
+-  **String Objects, Integer Objects, Dictionary Objects, List Objects**, ...
+
+### Definitions
+- Class - a template
+- Method - A defined capability of a class
+- Attribute - A bit of data in a class
+- Object or Instance - A particular instance of a class
