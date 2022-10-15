@@ -46,3 +46,10 @@ The two most common ways to send data over the Internet are: JSON and XML.
 
 
 ## Relational Databases
+### Terminology
+- **Database** - contains many tables
+- **Relation (or Table)** - contains tuples and attributes
+- **Tuple (or Row)** - a set of fields that generally represents an 'object' like a person or a music track
+- **Attribute (or Columns / Field)** - one of possibly many elements of data corresponding to the object represented by the row
+
+
