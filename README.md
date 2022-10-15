@@ -25,3 +25,7 @@ The two most common ways to send data over the Internet are: JSON and XML.
 
 
 ## Python Objects
+- An object is a bit of self-contained Code and Data
+- A key aspect of the Object approach is to break the problem into smaller understandable parts (divide and conquer)
+-  Objects have boundaries that allow us to ignore un-needed detail
+-  **String Objects, Integer Objects, Dictionary Objects, List Objects, ...
