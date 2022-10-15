@@ -52,4 +52,17 @@ The two most common ways to send data over the Internet are: JSON and XML.
 - **Tuple (or Row)** - a set of fields that generally represents an 'object' like a person or a music track
 - **Attribute (or Columns / Field)** - one of possibly many elements of data corresponding to the object represented by the row
 
+### SQL
+- Structured Query Language is the language we use to issue commands to the database
+- Create a table
+- Retrieve some data
+- Insert data
+- Delete data
+
+### Representing Relationships in a Database - Three Kinds of Keys
+- **Primary key** - generally an integer auto-increment field
+- **Logical key** - what the outside world uses for lookup
+- **Foreign key** - generally an integer key pointing to a row in another table
+
+
 
