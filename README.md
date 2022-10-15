@@ -6,6 +6,7 @@ Python fundamentals like variables, loops, conditionals and functions to complex
 - Networking
 - Web Services
 - Python Objects
+- Relational Databases
 
 
 ## Web Services
@@ -41,3 +42,7 @@ The two most common ways to send data over the Internet are: JSON and XML.
 - Another form of store and reuse
 - Write once - reuse many times
 - The new class (child) has all the capabilities of the old class (father) - and then some more
+
+
+
+## Relational Databases
