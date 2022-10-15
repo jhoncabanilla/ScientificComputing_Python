@@ -5,6 +5,7 @@ Python fundamentals like variables, loops, conditionals and functions to complex
 ## Content
 - Networking
 - Web Services
+- Python Objects
 
 
 ## Web Services
@@ -21,3 +22,6 @@ The two most common ways to send data over the Internet are: JSON and XML.
 
 ### API (Applicaton Program Interface)
 - The API itself is largely abstract in that it specifies an interface and controls the behavior of the objects specified in that interface. The software that provides the funcionality described by an API is said to be an 'implementation' of the API. An API is typically defined in terms of the programming language used to build an application.
+
+
+## Python Objects
