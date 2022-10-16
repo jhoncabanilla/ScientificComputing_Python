@@ -28,7 +28,7 @@ if __name__ == '__main__':
     # Llamamos al metodo party() de la clase para el objeto 
     animal1.edad()
     animal1.edad()
-
+ 
     fan1 = FootballFan(21, 'Jimmy')
     fan1.edad()
     fan1.score()
