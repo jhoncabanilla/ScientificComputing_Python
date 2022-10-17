@@ -1,7 +1,7 @@
 def arithmetic_arranger(problems, show=False): 
         # CHECK NUMBER OF PROBLEMS
         if len(problems) > 5:
-            return ("Error: Too many problems")
+            return "Error: Too many problems."
         
         up = ""
         down = ""
@@ -16,13 +16,13 @@ def arithmetic_arranger(problems, show=False):
            
             # CHECK OPERATOR
             if op != '+' and op != '-':
-                return ("Error: Operator must be '+' or '-'")
+                return "Error: Operator must be '+' or '-'."
             # CHECK IF OPERANDs ONLY CONTAIN DIGITS
             elif not firstOP.isdigit() or not secondOP.isdigit():
-                return ("Error: Numbers must only contain digits")
+                return "Error: Numbers must only contain digits."
             # CHECK OPERAND WIDTH
             elif int(firstOP) > 9999 or int(secondOP) > 9999:
-                return ("Error: Numbers cannot be more than four digits")
+                return "Error: Numbers cannot be more than four digits."
             else:
                 "La anchura de cada problema debe corresponderse a la suma del operador mas largo +1 de un espacio +1 del operador"
                 length = len(firstOP) if int(firstOP) > int(secondOP) else len(secondOP)
