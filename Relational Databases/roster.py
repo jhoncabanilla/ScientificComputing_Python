@@ -1,7 +1,7 @@
 import json
 import sqlite3
 
-# Conexion con la base de datos
+# Conexión con la base de datos
 conex = sqlite3.connect('rosterDB.sqlite')
 cursor = conex.cursor()
 
