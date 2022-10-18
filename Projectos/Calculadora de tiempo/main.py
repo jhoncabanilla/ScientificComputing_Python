@@ -1,5 +1,5 @@
 def add_time(start, duration, day=None):
-    # Las horas pueden ser AM O PM // Formato de reloj de 12 h
+    # Formato de reloj de 12 h
     # AM --> (00:00) hasta las 11:59 de la mañana
     # PM --> (12:00) hasta las 11:59 de la noche
 
