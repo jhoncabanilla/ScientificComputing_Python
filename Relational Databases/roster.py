@@ -1,5 +1,5 @@
-import sqlite3
 import json
+import sqlite3
 
 # Conexion con la base de datos
 conex = sqlite3.connect('rosterDB.sqlite')
