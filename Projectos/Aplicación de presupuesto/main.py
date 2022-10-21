@@ -1,5 +1,4 @@
 import math
-from tkinter import W
 
 
 class Category:
@@ -8,10 +7,15 @@ class Category:
     name = ""
     funds = 0
     gastos = 0
+    marked = False # Utilizo este atributo para saber si marco o no con 'o' en la tabla
 
     # Constructor
     def __init__(self, name):
         self.name = name
+        self.setMark(False)
+
+    def setMark(self, value):
+        self.marked = value
 
     # deposit() method - Este metodo agrega un objeto a la lista ledger
     def deposit(self, amount, description=""):
@@ -97,41 +101,46 @@ def create_spend_chart(categories):
         else:
             perc.append(rounded) 
 
-    #[70, 30, 20]
-    #[20, 100, 0] <-----
-
     print(perc)
     print("width=", width)
 
     for i in range(11):
         val = str(top) + "|"
+        line = ""
 
+        #Comprobamos si la categoria hay q marcarla o no
         if top in perc:
-            output = output + '{:>4}'.format(val)[:4]
-            # Comprobar para que categorias hay que marcar el valor
-            for i in range(len(categories)): # 0-1-2  ---- 2-5-8
-                if perc[i] == top:
-                    # Simulamos un switch para obtener la posicion indicada
-                    if i == 0:
-                        posi = 2
-                        output += '{n:>{w}}'.format(n='o', w=posi)[:width]
-                    elif i == 1:
-                        posi = 5
-                        output += '{n:>{w}}'.format(n='o', w=posi-2)[:width]
-                    elif i == 2:
-                        posi = 8
-                        output += '{n:>{w}}'.format(n='o', w=posi-5)[:width]
-                    else:
-                        posi = 11
-                        output += '{n:>{w}}'.format(n='o', w=posi-8)[:width]
-            output += "\n"
+            #[100,90,100] ---> (0,100), (1, 90), (2, 100)
+            indices = [i for i, x in enumerate(perc) if x >= top] # [0, 1]
+            if len(indices) > 1:
+                for i in indices:
+                    #categories[i].marked == True
+                    categories[i].setMark(True)
+            else: # [2]
+                #categories[indices[0]].marked == True
+                categories[indices[0]].setMark(True)
+
+        # Marcas laterales izquierdas iniciales
+        output = output + '{:>4}'.format(val)[:4]
+
+        if len(indices) == 1:
+            i = indices[0]
+            line += '{n:>{w}}'.format(n='o', w=(i+2*(i+1)))[:width]
+
         else:
-            output = output + '{:>4}'.format(val)[:4] + "\n"
+            # Procedemos a dibujar en las categorias marcadas
+            for i in range(len(categories)):
+                if categories[i].marked:
+                    line += " " + '{n:{w}.10}'.format(n='o', w=(i+2*(i+1)))
+
+        output += line + "\n" 
+
         top -= 10
 
 
-
-    output = output + '{:>14}'.format("-" * width) + "\n"
+    # AJUSTADO
+    dashes = "-" * width
+    output = output + '{n:>{w}}'.format(n=dashes, w=width+4) + "\n"
 
     # Por ultimo, mostramos los nombres de cada categoria de forma vertical
     line = ""
@@ -153,7 +162,8 @@ def create_spend_chart(categories):
     for index in range(max_len):
         for j in range(num):
             line += claves[j][index] + "  "
-        nombres += '{:>14}'.format(line) + "\n"
+            # AJUSTAR: CREO Q SERA IGUAL QUE LO OTRO
+        nombres += '{n:>{w}}'.format(n=line, w=width+4) + "\n"
         line = ""
 
     output += nombres
@@ -169,11 +179,11 @@ def main():
 
     food.deposit(1000, "initial deposit")
     food.withdraw(10.15, "groceries")
-    food.withdraw(100, "restaurant and more food for dessert")
+    food.withdraw(80, "restaurant and more food for dessert")
 
     clothing.deposit(1000, "initial deposit")
     clothing.withdraw(10.15)
-    clothing.withdraw(100)
+    clothing.withdraw(20)
 
     business.deposit(1000, "initial deposit")
     business.withdraw(10.15)
@@ -181,7 +191,7 @@ def main():
 
     auto.deposit(1000, "initial deposit")
     auto.withdraw(10.15)
-    auto.withdraw(100)
+    auto.withdraw(80)
 
     """ food = Category("Food")
     food.deposit(1000, "initial deposit")
@@ -203,7 +213,7 @@ def main():
     #expected = "Percentage spent by category\n100|          \n 90|          \n 80|          \n 70|    o     \n 60|    o     \n 50|    o     \n 40|    o     \n 30|    o     \n 20|    o  o  \n 10|    o  o  \n  0| o  o  o  \n    ----------\n     B  F  E  \n     u  o  n  \n     s  o  t  \n     i  d  e  \n     n     r  \n     e     t  \n     s     a  \n     s     i  \n           n  \n           m  \n           e  \n           n  \n           t  "
     #print(expected)
 
-    print(create_spend_chart([food, clothing, business]))
+    print(create_spend_chart([food, clothing, auto, business]))
 
 
 if __name__ == "__main__":
