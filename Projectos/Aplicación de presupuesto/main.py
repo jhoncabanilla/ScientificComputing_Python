@@ -80,8 +80,6 @@ class Category:
 
         return output
 
-
-
 def create_spend_chart(categories):
     # categories = [Food, Clothing]
     dicc = {}
