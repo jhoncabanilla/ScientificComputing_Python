@@ -2,33 +2,38 @@ import math
 
 
 class Category:
-    # Atributo de la clase
-    ledger = []
-    name = ""
-    funds = 0
-    gastos = 0
-    marked = False # Utilizo este atributo para saber si marco o no con 'o' en la tabla
-
     # Constructor
     def __init__(self, name):
+        # Atributo de la clase
         self.name = name
-        self.setMark(False)
+        self.ledger = []
+        self.funds = 0
+        self.gastos = 0
+        self.marked = False
 
-    def setMark(self, value):
-        self.marked = value
-
-    # deposit() method - Este metodo agrega un objeto a la lista ledger
+    # Este metodo agrega un objeto a la lista ledger, indicando el ingreso y la descripcion
     def deposit(self, amount, description=""):
         self.ledger.append({"amount": amount, "description": description})
 
         # Establecemos los fondos de la categoria
         self.funds = amount
 
-    # withdraw() method - Este metodo agrega un objeto a la lista ledger pero con la cantidad negativa
+    # Este metodo devuelve el balance actual basado en los depositos y en los withdraw("gastos")
+    def get_balance(self):
+        return self.funds
+    
+    # Metodo que comprueba si hay suficientes fondos
+    def check_funds(self, amount):
+        if amount > self.get_balance():
+            return False
+        else:
+            return True
+
+    # Este metodo agrega un objeto a la lista ledger pero con la cantidad negativa
     # Antes de añadir a ledger hay que comprobar que queden suficientes fondos
     def withdraw(self, amount, description=""):
         # Comprobamos si hay suficientes fondos
-        if self.check_funds:
+        if self.check_funds(amount):
             self.ledger.append({"amount": -amount, "description": description})
             self.funds -= amount
             self.gastos += amount
@@ -36,35 +41,20 @@ class Category:
         else:
             return False
 
-    # get_balance() method - Este metodo devuelve el balance actual basado en los depositos y en los withdraw("gastos")
-    def get_balance(self):
-        return self.funds
-
-    # clothing = Category("Clothing") ---  food.transfer(50, clothing)
+    # Metodo que realiza una transferencia a la categoria indicada
     def transfer(self, amount, budget_category):
-        if self.check_funds:
+        if self.check_funds(amount):
             # Primero añadimos al ledger el withdraw con la descripcion requerida y despues invocamos al metodo deposit de la otra categoria
             desc = "Transfer to " + budget_category.name
             self.withdraw(amount, desc)
 
-            desc = "Transfer from "+ budget_category.name
+            desc = "Transfer from "+ self.name
             budget_category.deposit(amount, desc)
             return True
         else: 
             return False
 
-    def get_ledger(self):
-        return self.ledger
-
-
-    # check_funds() method - Metodo que comprueba si hay suficientes fondos
-    def check_funds(self, amount):
-        if amount > self.get_balance():
-            return False
-        else:
-            return True
-
-    # __str__() method - Metodo utilizado para imprimir el objeto en el formato pedido
+    # _Metodo utilizado para imprimir el objeto en el formato pedido
     def __str__(self):
         leng = 30 - len(self.name)
         first = ('*' * int(leng/2) ) + str(self.name) + ('*' * int(leng/2) )
@@ -74,145 +64,100 @@ class Category:
             cant = "%.2f" % item['amount']
             second = second + '{:<23}'.format(item['description'])[:23] + '{:>7}'.format(cant)[:7] + "\n"
 
-        third = "Total: " + str(self.funds)
+        third = "Total: " + "%.2f" % self.funds
 
         output = first + "\n" + second + third
 
         return output
 
-def create_spend_chart(categories):
-    # categories = [Food, Clothing]
-    dicc = {}
+
+def create_spend_chart(categories):   
+    # Calculamos el ancho de la parte de los porcentajes
     width = 1+ len(categories)*3
+
+    # Calculamos el gasto total a partir del withdraw de cada categoria
+    gastos_totales = 0
     for item in categories:
-        dicc[item.name] = int(item.gastos)
+        gastos_totales += item.gastos
+
+    # Tenemos que redondear los gastos de cada categoria hacia abajo, al entero mas cercano
+    dicc = {}
+    for item in categories:
+        rounded = math.floor((item.gastos/gastos_totales)*10) * 10 # Multiplicamos para hacerlo multiple de 10 para luego representarlo
+        if rounded > 100:
+            dicc[item] = 100
+        else:
+            dicc[item] = rounded
 
     top = 100
-    output = ""
-
-    # Obtenemos una lista con los valores redondeados hacia el multiple de 10 menor
-    perc = []
-    for x in list(dicc.values()):
-        rounded = math.floor(x / 10) * 10
-        if rounded > 100:
-            perc.append(100)
-        else:
-            perc.append(rounded) 
-
-    print(perc)
-    print("width=", width)
+    output = "Percentage spent by category\n"
+    # Creamos este String de espaciado igual al ancho para representar los caracteres de forma correcta
+    derecha = ' ' * width
 
     for i in range(11):
         val = str(top) + "|"
-        line = ""
-
-        #Comprobamos si la categoria hay q marcarla o no
-        if top in perc:
-            #[100,90,100] ---> (0,100), (1, 90), (2, 100)
-            indices = [i for i, x in enumerate(perc) if x >= top] # [0, 1]
-            if len(indices) > 1:
-                for i in indices:
-                    #categories[i].marked == True
-                    categories[i].setMark(True)
-            else: # [2]
-                #categories[indices[0]].marked == True
-                categories[indices[0]].setMark(True)
-
+        lista = list(derecha)
         # Marcas laterales izquierdas iniciales
         output = output + '{:>4}'.format(val)[:4]
 
-        if len(indices) == 1:
-            i = indices[0]
-            line += '{n:>{w}}'.format(n='o', w=(i+2*(i+1)))[:width]
-
-        else:
-            # Procedemos a dibujar en las categorias marcadas
-            for i in range(len(categories)):
-                if categories[i].marked:
-                    line += " " + '{n:{w}.10}'.format(n='o', w=(i+2*(i+1)))
-
-        output += line + "\n" 
-
+        # Marcamos el porcentaje con 'o'
+        for key, value in dicc.items():
+            if value >= top:
+                # Necesitamos el indice que ocupa cada key
+                pos = list(dicc.keys()).index(key)
+                # Segun la posicion obtenida, colocamos 'o' en dicha posicion y luego realizamos un join para darle la forma correcta
+                lista[(pos + (pos*2+1) )] = 'o'
+                derecha = ''.join(lista)
+        output += derecha + "\n"
         top -= 10
 
-
-    # AJUSTADO
+    # Procedemos a dibujar los guiones y el nombre de cada categoria
     dashes = "-" * width
-    output = output + '{n:>{w}}'.format(n=dashes, w=width+4) + "\n"
+    output += '{n:>{w}}'.format(n=dashes, w=width+4) + "\n"
 
     # Por ultimo, mostramos los nombres de cada categoria de forma vertical
-    line = ""
-    nombres = ""
-    claves = list(dicc.keys())
-    num = len(claves)
-    # Obtenemos la longitud del string mas extenso de la lista
-    max_len = len(max((claves), key=len))
+    claves = [key.name for key in dicc.keys()]
+    max_len = len(max((claves), key=len)) # Obtenemos la longitud del string mas extenso de la lista
 
-    # Añadimos espacios en blanco a los strings que tengan menor longitud que la maxima
-    for item in claves:
-        pos = claves.index(item)
-        if len(item) < max_len:
-            while len(item) < max_len:
-                item += " "
-            claves[pos] = item
-
-    # Vamos añadiendo las mismas posiciones de cada nombre de categoria al string nombrado 'nombres'
-    for index in range(max_len):
-        for j in range(num):
-            line += claves[j][index] + "  "
-            # AJUSTAR: CREO Q SERA IGUAL QUE LO OTRO
-        nombres += '{n:>{w}}'.format(n=line, w=width+4) + "\n"
-        line = ""
-
-    output += nombres
+    # Para mostrar los nombre de forma vertical, seguimos el mismo metodo que el utilizado para dibujar los porcentajes
+    abajo = " " * width
+    for i in range(max_len):
+        lista = list(abajo)
+        # Marcas laterales izquierdas iniciales
+        output = output + '{:>4}'.format(' ')[:4]
+        for j in range(len(claves)):
+            # Comprobamos si llegamos a un nombre menor que el mas largo, para en ese caso no escribir el caracter correspondiente, sino un espacio en blanco
+            if len(claves[j]) > i:
+                lista[(j + (j*2+1) )] = claves[j][i]
+                abajo = ''.join(lista)
+            else:
+                lista[(j + (j*2+1) )] = " "
+                abajo = ''.join(lista)
+                
+        # Lo ultimo, compruebo si estamos en la ultima iteracion para evitar el ultimo "\n" y mostrar el resultado correcto
+        if i == (max_len-1):
+            output += abajo
+        else:
+            output += abajo + "\n"
 
     return output
 
 
 def main():
     food = Category("Food")
-    clothing = Category("Clothing")
+    entertainment = Category("Entertainment")
     business = Category("Business")
-    auto = Category("Auto")
 
-    food.deposit(1000, "initial deposit")
-    food.withdraw(10.15, "groceries")
-    food.withdraw(80, "restaurant and more food for dessert")
+    food.deposit(900, "deposit")
+    entertainment.deposit(900, "deposit")
+    business.deposit(900, "deposit")
 
-    clothing.deposit(1000, "initial deposit")
-    clothing.withdraw(10.15)
-    clothing.withdraw(20)
+    food.withdraw(105.55)
+    entertainment.withdraw(33.40)
+    business.withdraw(10.99)
 
-    business.deposit(1000, "initial deposit")
-    business.withdraw(10.15)
-    business.withdraw(100)
+    print(create_spend_chart([business, food, entertainment]))
 
-    auto.deposit(1000, "initial deposit")
-    auto.withdraw(10.15)
-    auto.withdraw(80)
-
-    """ food = Category("Food")
-    food.deposit(1000, "initial deposit")
-    food.withdraw(10.15, "groceries")
-    food.withdraw(15.89, "restaurant and more food for dessert")
-    #print(food.get_balance())
-    clothing = Category("Clothing")
-    food.transfer(50, clothing)
     
-    clothing.withdraw(25.55)
-    clothing.withdraw(100)
-    auto = Category("Auto")
-    auto.deposit(1000, "initial deposit")
-    auto.withdraw(15)"""
-
-    #print(food)
-    #print(clothing)
-
-    #expected = "Percentage spent by category\n100|          \n 90|          \n 80|          \n 70|    o     \n 60|    o     \n 50|    o     \n 40|    o     \n 30|    o     \n 20|    o  o  \n 10|    o  o  \n  0| o  o  o  \n    ----------\n     B  F  E  \n     u  o  n  \n     s  o  t  \n     i  d  e  \n     n     r  \n     e     t  \n     s     a  \n     s     i  \n           n  \n           m  \n           e  \n           n  \n           t  "
-    #print(expected)
-
-    print(create_spend_chart([food, clothing, auto, business]))
-
-
 if __name__ == "__main__":
     main()
