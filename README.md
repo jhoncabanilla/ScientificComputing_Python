@@ -2,6 +2,8 @@
 
 Python fundamentals like variables, loops, conditionals and functions to complex data structures, networking, relational databases and data visualization.
 
+[Python for Everybody - Full University Python Course](https://www.youtube.com/watch?v=8DvywoWv6fI)
+
 ## Content
 - Networking
 - Web Services
